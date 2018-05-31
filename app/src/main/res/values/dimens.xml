@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="small_item_spacing">12dp</dimen>
+    <dimen name="small_item_drawable_padding">5dp</dimen>
+    <dimen name="small_items_maring_vertical">4dp</dimen>
+</resources>

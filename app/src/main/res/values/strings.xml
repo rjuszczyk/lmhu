@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">android</string>
+    <string name="login_with_google">Sign</string>
+    <string name="login_with_facebook">Sign</string>
+    <string name="sign_out">Logout</string>
+
+    <string name="facebook_app_id">174753012946782</string>
+    <string name="fb_login_protocol_scheme">fb174753012946782</string>
+
+</resources>

@@ -1,0 +1,73 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:textAppearanceButton">@style/TextAppearanceButton</item>
+        <item name="android:textAppearance">@style/TextAppearanceMy</item>
+        <item name="android:textAppearanceInverse">@style/TextAppearanceMyInverse</item>
+        <item name="android:textAppearanceMediumInverse">@style/TextAppearanceMyInverse</item>
+        <item name="cardViewStyle">@style/RoundedCardView</item>
+
+        <item name="collapsingToolbarStyle">@style/CollapsingToolbarBase.Long</item>
+        <item name="buttonStyleThinBorder">@style/LetMeHelpUButton.Colored.ThinBorder</item>
+
+        <item name="cornerRadius">10dp</item>
+        <item name="horizontalMargin">8dp</item>
+
+
+    </style>
+
+    <style name="RoundedCardView" parent="@style/CardView">
+        <item name="cardCornerRadius">10dp</item>
+        <!--<item name="cardBackgroundColor">?attr/colorBackgroundFloating</item>-->
+    </style>
+
+    <style name="TextAppearanceButton" parent="@style/TextAppearance.AppCompat.Widget.Button">
+        <item name="fontFamily">@font/sf_pro_medium</item>
+    </style>
+
+    <style name="TextAppearanceMy" parent="@android:style/TextAppearance.Material">
+        <item name="fontFamily">@font/sf_pro_light</item>
+    </style>
+
+    <style name="TextAppearanceMyInverse" parent="@android:style/TextAppearance.Material.Inverse">
+        <item name="fontFamily">@font/sf_pro_light</item>
+    </style>
+
+    <style name="LetMeHelpUButton.Colored.ThinBorder" parent="@style/LetMeHelpUButton.Colored">
+        <item name="android:background">@drawable/button_bg_layers</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textAlignment">gravity</item>
+    </style>
+
+    <style name="LetMeHelpUButton.Colored" parent="@style/Widget.AppCompat.Button.Colored">
+        <item name="android:textAppearance">@style/TextAppearance.LetMeHelpUButton.Colored</item>
+    </style>
+
+    <style name="LetMeHelpUButton.Colored.Glowing" parent="@style/LetMeHelpUButton.Colored">
+        <item name="android:background">@drawable/red_bg_layers</item>
+    </style>
+
+    <style name="TextAppearance.LetMeHelpUButton.Colored" parent="@style/TextAppearance.AppCompat.Widget.Button.Colored">
+        <item name="fontFamily">@font/sf_pro_light</item>
+    </style>
+
+    <style name="CollapsingToolbarBase.Long">
+        <item name="ctimageHeight">300dp</item>
+    </style>
+
+    <style name="Widget.AppCompat.Button.Borderless.Flat" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+    <style name="Widget.AppCompat.Button.Borderless.Colored.Flat" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+</resources>

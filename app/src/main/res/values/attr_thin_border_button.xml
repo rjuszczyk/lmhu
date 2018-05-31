@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="buttonStyleThinBorder" format="reference"/>
+    <declare-styleable name="ThinBorderButton">
+        <attr name="tbbDrawableStart" format="reference" />
+        <attr name="tbbDrawableEnd" format="reference" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/offer_thumbnail"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:src="@mipmap/sample_img"
+            android:scaleType="centerCrop"
+            />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            >
+            <TextView
+                android:id="@+id/offer_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="16sp"
+                android:fontFamily="@font/sf_pro_light"
+                android:maxLines="2"
+                android:text="I'll write a staggering essay for you!"
+                android:textColor="#43445e"
+                android:lineSpacingMultiplier="0.9"
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_items_maring_vertical"
+                >
+                <eu.letmehelpu.android.view.TextViewDrawable
+                    android:id="@+id/offer_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ongoing"
+                    android:drawableStart="@drawable/ic_ongoing"
+                    android:textColor="@color/ongoingColor"
+                    android:layout_marginEnd="@dimen/small_item_spacing"
+                    android:drawablePadding="@dimen/small_item_drawable_padding"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/sf_pro_medium"
+
+
+                    />
+                <eu.letmehelpu.android.view.TextViewDrawable
+                    android:id="@+id/offer_contractor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Mateusz Wójtowicz"
+                    android:drawableStart="@drawable/ic_person"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:drawablePadding="@dimen/small_item_drawable_padding"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/sf_pro_medium"
+                    android:textColor="#999999"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/arrow_more"
+            android:layout_marginEnd="16dp"
+            />
+    </LinearLayout>
+</merge>

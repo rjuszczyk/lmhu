@@ -1,0 +1,9 @@
+<resources>
+    <string name="login_with_google">Sign in with Google DEV</string>
+
+    <!--<string name="facebook_app_id">179882326070449</string>-->
+    <string name="facebook_app_id">174753012946782</string>
+
+    <!--<string name="fb_login_protocol_scheme">fb179882326070449</string>-->
+    <string name="fb_login_protocol_scheme">fb174753012946782</string>
+</resources>
