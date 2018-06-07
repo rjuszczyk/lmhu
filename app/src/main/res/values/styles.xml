@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorAccent</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -13,13 +13,18 @@
         <item name="android:textAppearanceMediumInverse">@style/TextAppearanceMyInverse</item>
         <item name="cardViewStyle">@style/RoundedCardView</item>
 
-        <item name="collapsingToolbarStyle">@style/CollapsingToolbarBase.Long</item>
+        <item name="collapsingToolbarStyle">@style/CollapsingToolbarBase</item>
         <item name="buttonStyleThinBorder">@style/LetMeHelpUButton.Colored.ThinBorder</item>
 
         <item name="cornerRadius">10dp</item>
         <item name="horizontalMargin">8dp</item>
 
 
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="AppThemeBase">
+        <item name="collapsingToolbarStyle">@style/CollapsingToolbarBase</item>
     </style>
 
     <style name="RoundedCardView" parent="@style/CardView">
@@ -57,10 +62,6 @@
 
     <style name="TextAppearance.LetMeHelpUButton.Colored" parent="@style/TextAppearance.AppCompat.Widget.Button.Colored">
         <item name="fontFamily">@font/sf_pro_light</item>
-    </style>
-
-    <style name="CollapsingToolbarBase.Long">
-        <item name="ctimageHeight">300dp</item>
     </style>
 
     <style name="Widget.AppCompat.Button.Borderless.Flat" parent="@style/Widget.AppCompat.Button.Borderless">

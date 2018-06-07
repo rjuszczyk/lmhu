@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,16 +24,30 @@ import eu.letmehelpu.android.Network;
 import eu.letmehelpu.android.R;
 import eu.letmehelpu.android.TestApi;
 import eu.letmehelpu.android.network.OfferItem;
+import eu.letmehelpu.android.view.CollapsingToolbarWithPagerIndicator;
+import eu.letmehelpu.android.view.PagerIndicator;
+import eu.letmehelpu.android.view.ScrollableCollapsingManager;
+import eu.letmehelpu.android.view.ScrollableWithCollapsing;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class OfferListActivity extends AppCompatActivity {
+@RequiresApi(api = Build.VERSION_CODES.M)
+public class OfferListActivity extends AppCompatActivity implements PagerIndicator.IndicatorChangeListener {
 
     private View bottomNavIndicator;
     private View bottomNav;
     private RecyclerView offerList;
+    private RecyclerView offerList2;
+    ScrollableCollapsingManager scrollableCollapsingManager;
+    private CollapsingToolbarWithPagerIndicator collapsingToolbar;
     private int bottomItemSelected = 0;
-    private OffersAdapter offerListAdapter;
+
+
+
+
+
+    private int delta = -1;
+
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, OfferListActivity.class);
@@ -43,9 +59,26 @@ public class OfferListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offers);
 
+
+
+
+        if(savedInstanceState != null) {
+            delta = savedInstanceState.getInt("delta");
+           // linearLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable("linearLayoutManager"));
+
+        }
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         offerList = findViewById(R.id.offer_list);
+        offerList2 = findViewById(R.id.offer_list2);
+        collapsingToolbar = findViewById(R.id.collapsingToolbar);
+
+        scrollableCollapsingManager = new ScrollableCollapsingManager(collapsingToolbar, offerList);
+
+
+        collapsingToolbar.setIndicatorListener(this);
         initOfferListAdapter();
 
         bottomNavIndicator = findViewById(R.id.bottom_nav_indicator);
@@ -93,69 +126,67 @@ public class OfferListActivity extends AppCompatActivity {
     }
 
     private void initOfferListAdapter() {
-        offerListAdapter = new OffersAdapter();
-        offerList.setAdapter(offerListAdapter);
-        offerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        RecyclerView.LayoutManager linearLayoutManager  = new LinearLayoutManager(OfferListActivity.this, LinearLayoutManager.VERTICAL, false);
+        offerList.setLayoutManager(linearLayoutManager);
+
+        offerList2.setLayoutManager(new LinearLayoutManager(OfferListActivity.this, LinearLayoutManager.VERTICAL, false));
+
+
     }
 
-
-    //    private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
-//        @Override
-//        public Response intercept(Chain chain) throws IOException {
-//            Response originalResponse = chain.proceed(chain.request());
-//            if (Utils.isNetworkAvailable(this)) {
-//                int maxAge = 60; // read from cache for 1 minute
-//                return originalResponse.newBuilder()
-//                        .header("Cache-Control", "public, max-age=" + maxAge)
-//                        .build();
-//            } else {
-//                int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
-//                return originalResponse.newBuilder()
-//                        .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
-//                        .build();
-//            }
-//        }
-//    }
+    static boolean s = true;
     private void test() {
-        TestApi testApi = Network.getInstance().getTestApi();
-        testApi.work().enqueue(new Callback<List<OfferItem>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<OfferItem>> call, @NonNull retrofit2.Response<List<OfferItem>> response) {
 
-                List<OfferItem> responseBody = response.body();
-                if(responseBody != null) {
-                    offerListAdapter.setItems(responseBody);
-//                    for (int i = 0; i < length; i++) {
-//                        OfferItem offerItem = responseBody.get(i);
-//                        boolean isLast = i == length - 1;
-//                        OfferItemView offerItemView = new OfferItemView(OfferListActivity.this);
-//                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                        int _8dp = (int) (getResources().getDisplayMetrics().density * 8);
-//                        int _10dp = (int) (getResources().getDisplayMetrics().density * 10);
-//
-//                        if (isLast)
-//                            params.setMargins(_8dp, _10dp, _8dp, _10dp);
-//                        else
-//                            params.setMargins(_8dp, _10dp, _8dp, 0);
-//
-//                        offerItemView.setLayoutParams(params);
-//
-//                        offerItemView.setOfferTitle(offerItem.getTitle());
-//                        offerItemView.setContractor(offerItem.getContractor());
-//                        offerItemView.setOfferStatus(offerItem.getStatus());
-//                        offerItemView.setThumbnail(offerItem.getThumbnail());
-//
-//                        offerList.addView(offerItemView);
-//                    }
-                }
-                Log.d("test", "onResponse() called with: call = [" + call + "], response = [" + response + "]");
-            }
-
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onFailure(@NonNull Call<List<OfferItem>> call, @NonNull Throwable t) {
-                Log.d("test", "onFailure() called with: call = [" + call + "], t = [" + t + "]");
+            public void run() {
+
+
+                TestApi testApi = Network.getInstance().getTestApi();
+                testApi.work().enqueue(new Callback<List<OfferItem>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<List<OfferItem>> call, @NonNull retrofit2.Response<List<OfferItem>> response) {
+
+                        List<OfferItem> responseBody = response.body();
+                        if(responseBody != null) {
+                            List<OfferItem>  responseBody2 = responseBody;//.subList(0,3);
+                            OffersAdapter offerListAdapter = new OffersAdapter();
+                            offerListAdapter.setItems(responseBody2);
+                            int h = offerList.getHeight() - collapsingToolbar.getTTT2();
+                            int _95dp = (int) (offerList.getResources().getDisplayMetrics().density * 95);
+                            int hh = responseBody2.size()*_95dp;
+                            int dh = h-hh;
+                            if(dh>0) {
+                                offerListAdapter.setTransparentItem(dh);
+                            }
+
+                            offerList.setAdapter(offerListAdapter);
+
+                            OffersAdapter offerListAdapter2 = new OffersAdapter();
+                            offerListAdapter2.setItems(responseBody);
+                            offerList2.setAdapter(offerListAdapter2);
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    scrollableCollapsingManager.attachRecycler(offerList);
+                                }
+                            }, 1);
+
+
+                        }
+                        Log.d("test", "onResponse() called with: call = [" + call + "], response = [" + response + "]");
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<List<OfferItem>> call, @NonNull Throwable t) {
+                        Log.d("test", "onFailure() called with: call = [" + call + "], t = [" + t + "]");
+                    }
+                });
             }
-        });
+        }, 1000);
+
+
     }
 
     public void setBottomItemSelected(int bottomItemSelected) {
@@ -179,9 +210,39 @@ public class OfferListActivity extends AppCompatActivity {
         return w2 - bottomNavIndicator.getWidth()/2;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("bottomItemSelected", bottomItemSelected);
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) offerList.getLayoutManager();
+//        if(linearLayoutManager != null) {
+//            outState.putParcelable("linearLayoutManager", linearLayoutManager.onSaveInstanceState());
+//        }
+
+
+//        outState.putInt("delta", scrollableWithCollapsing.getDetlatScroll());
+
+
+
+    }
+
+    @Override
+    public void onPageChanged(int page) {
+        if(page == 0) {
+            scrollableCollapsingManager.attachRecycler(offerList);
+            offerList.setVisibility(View.VISIBLE);
+            offerList2.setVisibility(View.VISIBLE);
+            offerList.setTranslationX(offerList.getWidth());
+            offerList.animate().translationX(0).start();
+            offerList2.animate().translationX(-offerList.getWidth()).start();
+        } else {
+            scrollableCollapsingManager.attachRecycler(offerList2);
+            offerList.setVisibility(View.VISIBLE);
+            offerList2.setVisibility(View.VISIBLE);
+            offerList2.setTranslationX(offerList2.getWidth());
+            offerList2.animate().translationX(0).start();
+            offerList.animate().translationX(-offerList2.getWidth()).start();
+        }
     }
 }

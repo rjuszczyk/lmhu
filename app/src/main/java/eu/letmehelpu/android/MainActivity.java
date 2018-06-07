@@ -104,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
             userRepository.logout();
             goToLoginActivity();
         }
+        if(userRepository.getLoggedUser().getLoggedWith() == LoggedUser.LOGGED_WITH_APP) {
+            userRepository.logout();
+            goToLoginActivity();
+        }
     }
 
     private void goToLoginActivity() {

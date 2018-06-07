@@ -194,6 +194,9 @@ public class PagerIndicator extends FrameLayout {
     public void setPageSelected(int page) {
         highlightSelected(page);
         indicatorLine.animate().translationX(indicator.getWidth()*page*0.5f).start();
+        if(pageChangeListener != null) {
+            pageChangeListener.onPageChanged(page);
+        }
     }
 
     public void update(float fP) { //fP <0, 1>
@@ -219,5 +222,14 @@ public class PagerIndicator extends FrameLayout {
             state = bundle.getParcelable("superState");
         }
         super.onRestoreInstanceState(state);
+    }
+
+    IndicatorChangeListener  pageChangeListener;
+    public void setIndicatorListener(IndicatorChangeListener  pageChangeListener) {
+        this.pageChangeListener=pageChangeListener;
+    }
+
+    public interface IndicatorChangeListener {
+        void onPageChanged(int page);
     }
 }

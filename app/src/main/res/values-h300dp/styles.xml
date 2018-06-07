@@ -1,0 +1,8 @@
+<resources>
+    <style name="AppTheme" parent="AppThemeBase">
+        <item name="collapsingToolbarStyle">@style/CollapsingToolbar.Medium</item>
+    </style>
+    <style name="CollapsingToolbar.Medium" parent="CollapsingToolbarBase">
+        <item name="ctimageHeight">150dp</item>
+    </style>
+</resources>

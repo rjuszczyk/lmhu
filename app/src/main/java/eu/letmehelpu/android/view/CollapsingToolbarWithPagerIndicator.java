@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -28,7 +28,7 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
     private View logo;
     private View toolbarShadow;
     private View image;
-    private Toolbar toolbar;
+    public Toolbar toolbar;
 
     public CollapsingToolbarWithPagerIndicator(@NonNull Context context) {
         super(context);
@@ -56,12 +56,26 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
     ValueAnimator.AnimatorUpdateListener listenerAnim = new ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
-            Log.d("Radek", "onAnimationUpdate() "+animation.getAnimatedValue());
+
             a[0] = (float) animation.getAnimatedValue();
 
             updateIndicatorProgress();
         }
     };
+
+
+    ValueAnimator animatorSmoothly;
+    float currentScroll;
+    float targetScroll;
+    ValueAnimator.AnimatorUpdateListener listenerAnimSmoothly = new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+
+            updateScroll((Integer) animation.getAnimatedValue(), true);
+        }
+    };
+
+
     private void init(@Nullable AttributeSet attrs) {
         if(attrs != null) {
             TypedArray a = getContext().getTheme().obtainStyledAttributes(
@@ -100,7 +114,6 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
         setParamsHeight(top, topHeight);
         setParamsHeight(parallaxImage, imageHeight);
         setParamsHeight(toolbarContainer, imageHeight);
-
     }
 
     private float getDefaultIndicatorHeight() {
@@ -139,8 +152,36 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
     int topLogoEnd;
     int heightLogo;
 
-    public void updateScroll(int scrollY) {
+    public void updateScrollSmoothly(int targetScroll) {
+        if(first) {
+            updateScroll(targetScroll);
+            return;
+        }
+        if(this.targetScroll == targetScroll) return;
+        this.targetScroll = targetScroll;
+        if(animatorSmoothly != null) {
+            animatorSmoothly.cancel();
+        }
 
+
+        animatorSmoothly = ValueAnimator.ofInt((int) currentScroll, targetScroll);
+        animatorSmoothly .addUpdateListener(listenerAnimSmoothly);
+        animatorSmoothly .start();
+    }
+
+    public void updateScroll(int scrollY) {
+        updateScroll(scrollY, false);
+    }
+
+    public void updateScroll(int scrollY, boolean byAnim) {
+        if(!byAnim) {
+            if(animatorSmoothly != null) {
+                animatorSmoothly.cancel();
+                animatorSmoothly = null;
+                targetScroll = Integer.MIN_VALUE;
+            }
+        }
+        currentScroll = scrollY;
         if(first) {
             TextView title = (TextView) toolbar.getChildAt(0);
 
@@ -151,7 +192,6 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
 
             int leftLogoStartX = getRelativeLeft(logo, toolbarParent);
             int topLogoStartX = getRelativeTop(logo, toolbarParent);
-
             int leftLogoEndX = getRelativeLeft(title, toolbarParent);// - title.getPaddingLeft();
             int topLogoEndX = getRelativeTop(title, toolbarParent);// - title.getPaddingTop();
 
@@ -164,6 +204,7 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
             topLogoEnd = topLogoStartX - topLogoEndX;
 
             heightLogo = logo.getHeight();
+            first = false;
         }
 
         if(scrollY < 0) scrollY = 0;
@@ -186,7 +227,7 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
         float endY = parallaxImage.getHeight();
 
         double delta = endY - startY;
-        double delta2 = endY - toolbar.getHeight();
+        double delta2 = parallaxTo;//endY - toolbar.getHeight();
         double relativeY = scrollY - startY;
         double relativeYprogressShadow = scrollY - parallaxTo - toolbarShadowToBeShownAfter;
         double relativeY2 = scrollY;
@@ -218,7 +259,7 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
         logo.setScaleY((float) ((1 - progress2) + scaleTo * progress2));
 
 
-        if(scrollY >= parallaxTo) {
+        if(scrollY >= parallaxTo-1) {
             if(animateTo != 1) {
                 if(animator != null) animator.cancel();
                 animateTo = 1;
@@ -238,6 +279,11 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
 
         indicatorProgressUpdate((float) progress);
     }
+
+    public void setIndicatorListener(PagerIndicator.IndicatorChangeListener pageChangeListener) {
+        pagerIndicator.setIndicatorListener(pageChangeListener);
+    }
+
     float indicatorOrogress;
     private void indicatorProgressUpdate(float progress) {
         indicatorOrogress = progress;
@@ -282,8 +328,10 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
     }
 
     public int getTTT() {
-        return (int)( imageHeight - ( toolbar.getHeight() + indicatorHeight/2) )  ;
+        return (int)( imageHeight - ( toolbar.getHeight() + indicatorHeight/2) );
     }
 
-
+    public int getTTT2() {
+        return (int)(imageHeight - toolbar.getHeight());
+    }
 }
