@@ -34,7 +34,7 @@ public class ScrollableCollapsingManager {
             CollapsingToolbarWithPagerIndicator collapsableView,
         RecyclerView scrollableView) {
         this.collapsableView = collapsableView;
-        this.scrollableView = scrollableView;
+        this.scrollableView = null;//scrollableView;
     }
 
     public void attachRecycler(RecyclerView recyclerView) {
@@ -46,22 +46,42 @@ public class ScrollableCollapsingManager {
             lastDelta = ScrollableCollapsingManager.deltaMap.containsKey(scrollableView.getId()) ? ScrollableCollapsingManager.deltaMap.get(scrollableView.getId()) : 0;
             currentDelta = ScrollableCollapsingManager.deltaMap.containsKey(recyclerView.getId()) ? ScrollableCollapsingManager.deltaMap.get(recyclerView.getId()) : 0;
         }
+        int lastScroll = 0;
+        if(scrollableView != null)
+            lastScroll = ScrollableWithCollapsing.getScrollFromRecyclerView(scrollableView, collapsableView);
         scrollableView = recyclerView;
         int currentScroll;
         int desiredScroll;
 
         if(scrollableView.getPaddingTop() == 0) {
+            scrollableView.setPadding(
+                    scrollableView.getPaddingLeft(),
+                    collapsableView.getCollapsableHeight(),
+                    scrollableView.getPaddingRight(),
+                    scrollableView.getPaddingBottom()
+            );
             currentScroll = 0;
             desiredScroll = -collapsableView.getCollapsableHeight();
+            scrollableView.scrollBy(0, desiredScroll - currentScroll);
 //            currentScroll = 0;//ScrollableWithCollapsing.getScrollFromRecyclerView(scrollableView, collapsableView);;
 //            desiredScroll = currentDelta + collapsableView.getTTT()-collapsableView.getCollapsableHeight();
-        } else {
+        }
+//        else
+            {
             currentScroll = ScrollableWithCollapsing.getScrollFromRecyclerView(scrollableView, collapsableView);
             if(lastDelta>0 && currentDelta>0) desiredScroll = currentScroll;
             else if(lastDelta > 0 && currentDelta <= 0) {
                 desiredScroll = collapsableView.getTTT();
             } else
-            desiredScroll = currentScroll;//currentDelta +  collapsableView.getTTT() - collapsableView.getCollapsableHeight();
+                if(lastScroll>=0 && lastScroll<=collapsableView.getTTT() &&
+                        currentScroll>=0 && currentScroll<=collapsableView.getTTT()     ) {
+                    desiredScroll = lastScroll;
+                } else {
+                    Log.d("Radek", "lastDelta = " + lastDelta + " currentDelta = " + currentDelta);
+                    Log.d("Radek", "lastScroll = " + lastScroll + " currentScroll = " + currentScroll);
+                    desiredScroll = currentScroll;
+                }
+        //    desiredScroll = lastScroll;
         }
 
 
@@ -82,7 +102,7 @@ public class ScrollableCollapsingManager {
     }
 
 
-    int lastCollapsableHeight = -1;
+
 
     private void initScrollingEffect() {
 
@@ -107,22 +127,7 @@ public class ScrollableCollapsingManager {
         });
 
 
-        Toolbar toolbar = collapsableView.toolbar;
 
-//        toolbar.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-//            @Override
-//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                lastCollapsableHeight = collapsableView.getCollapsableHeight();
-                scrollableView.setPadding(
-                        scrollableView.getPaddingLeft(),
-                        collapsableView.getCollapsableHeight(),
-                        scrollableView.getPaddingRight(),
-                        scrollableView.getPaddingBottom()
-                );
-           //     collapsableView.updateScroll(scrollEventsProvider.getScrollFromView(scrollableView));
-//                v.removeOnLayoutChangeListener(this);
-//            }
-//        });
 
     }
 
