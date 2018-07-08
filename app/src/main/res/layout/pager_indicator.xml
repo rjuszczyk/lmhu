@@ -11,7 +11,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/card"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="1dp"
         android:layout_gravity="top"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -22,7 +22,7 @@
         <LinearLayout
             android:id="@+id/optionsContainer"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="1dp"
             android:layout_gravity="top"
 
             android:elevation="100dp"
@@ -58,24 +58,21 @@
 
     </android.support.v7.widget.CardView>
 
-
-
-
-    <FrameLayout
+    <eu.letmehelpu.android.view.CustomTestView
         android:id="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_gravity="bottom"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:elevation="100dp">
-
+        android:elevation="100dp"
+        >
         <ImageView
-            android:id="@+id/indicator_line"
             android:layout_width="130dp"
             android:layout_height="46dp"
-            android:layout_gravity="left"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:background="@drawable/red_underline" />
-    </FrameLayout>
+    </eu.letmehelpu.android.view.CustomTestView>
 
 </merge>

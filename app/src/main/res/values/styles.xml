@@ -17,9 +17,7 @@
         <item name="buttonStyleThinBorder">@style/LetMeHelpUButton.Colored.ThinBorder</item>
 
         <item name="cornerRadius">10dp</item>
-        <item name="horizontalMargin">8dp</item>
-
-
+        <item name="horizontalMargin">48dp</item>
     </style>
 
     <!-- Base application theme. -->

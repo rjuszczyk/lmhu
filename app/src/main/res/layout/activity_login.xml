@@ -122,7 +122,8 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_gravity="bottom"
-        android:background="?attr/colorBackgroundFloating">
+        android:background="?attr/colorBackgroundFloating"
+        >
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -145,5 +146,48 @@
             android:padding="0dp"
             android:text="New here?"
             />
+    </LinearLayout>
+
+    <eu.letmehelpu.android.view.CustomTestView
+        android:id="@+id/test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        >
+        <ImageView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/red_underline" />
+    </eu.letmehelpu.android.view.CustomTestView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:alpha="0.5">
+        <View
+            android:background="#F0F"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+        <View
+            android:background="#FF0"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:alpha="0.5"
+        android:layout_gravity="right">
+        <View
+            android:background="#F0F"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+        <View
+            android:background="#FF0"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
     </LinearLayout>
 </FrameLayout>

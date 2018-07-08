@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.View;
@@ -21,11 +22,11 @@ public class PagerIndicator extends FrameLayout {
     private View optionsContainer;
     private CardView card;
     private View split;
-    private View indicatorLine;
-    private View indicator;
     private View option0;
     private View option1;
+    private CustomTestView indicator;
     private int selectedPage;
+    private ViewPager viewPager;
 
     public PagerIndicator(@NonNull Context context) {
         super(context);
@@ -86,10 +87,13 @@ public class PagerIndicator extends FrameLayout {
         card = view.findViewById(R.id.card);
         split = view.findViewById(R.id.split);
 
+        indicator = view.findViewById(R.id.indicator);
+
         setParamsHeight(optionsContainer, indicatorHeight);
         setParamsHeight(card, indicatorHeight);
 
         highlightSelected(selectedPage);
+
     }
 
     public void setIndicatorHeight(float indicatorHeight) {
@@ -118,37 +122,18 @@ public class PagerIndicator extends FrameLayout {
 
         float value = from*(1-pr) + to*pr;
 
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) card.getLayoutParams();
-        params.leftMargin = (int) value;
-        params.rightMargin = (int) value;
-        card.setLayoutParams(params);
-
-        indicatorLine = findViewById(R.id.indicator_line);
-        indicator = findViewById(R.id.indicator);
-
-        if(indicator.isLaidOut()) {
-            updateIndicatorWidth();
-            highlightSelected(selectedPage);
-            update(selectedPage);
-        } else {
-            indicator.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-
-                    updateIndicatorWidth();
-                    highlightSelected(selectedPage);
-                    update(selectedPage);
-                    indicator.removeOnLayoutChangeListener(this);
-                }
-            });
+        {
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) card.getLayoutParams();
+            params.leftMargin = (int) value;
+            params.rightMargin = (int) value;
+            card.setLayoutParams(params);
         }
-    }
-
-    private void updateIndicatorWidth() {
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) indicatorLine.getLayoutParams();
-        params.width = indicator.getWidth()/2 -  params.leftMargin - params.rightMargin;
-
-        indicatorLine.setLayoutParams(params);
+        {
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) indicator.getLayoutParams();
+            params.leftMargin = (int) value;
+            params.rightMargin = (int) value;
+            indicator.setLayoutParams(params);
+        }
     }
 
     private void setParamsHeight(View optionsContainer, float indicatorHeight) {
@@ -191,16 +176,16 @@ public class PagerIndicator extends FrameLayout {
         option1.setSelected(page == 1);
     }
 
-    public void setPageSelected(int page) {
-        highlightSelected(page);
-        indicatorLine.animate().translationX(indicator.getWidth()*page*0.5f).start();
-        if(pageChangeListener != null) {
-            pageChangeListener.onPageChanged(page);
-        }
+    public void updateIndicator(float position) {
+        indicator.updatePosition(position);
     }
 
-    public void update(float fP) { //fP <0, 1>
-        indicatorLine.setTranslationX(indicator.getWidth()*fP*0.5f);
+    public void setPageSelected(int page) {
+        highlightSelected(page);
+        indicator.selectPosition(page);
+        if(viewPager!=null) {
+            viewPager.setCurrentItem(page);
+        }
     }
 
     @Override
@@ -224,12 +209,28 @@ public class PagerIndicator extends FrameLayout {
         super.onRestoreInstanceState(state);
     }
 
-    IndicatorChangeListener  pageChangeListener;
-    public void setIndicatorListener(IndicatorChangeListener  pageChangeListener) {
-        this.pageChangeListener=pageChangeListener;
-    }
+    public void setupWithViewPager(ViewPager mViewPager) {
+        viewPager = mViewPager;
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                float pos = position + positionOffset;
+                updateIndicator(pos);
+            }
 
-    public interface IndicatorChangeListener {
-        void onPageChanged(int page);
+            @Override
+            public void onPageSelected(int position) {
+                setPageSelected(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        if(viewPager!=null) {
+            viewPager.setCurrentItem(selectedPage);
+        }
     }
 }

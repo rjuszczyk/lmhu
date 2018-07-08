@@ -10,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EntryActivity">
+        <!--<activity android:name=".offers.OfferListActivity2"/>-->
+        <activity android:name=".offers.OfferListActivity2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,6 +20,7 @@
         </activity>
         <activity android:name=".MainActivity"/>
         <activity android:name=".offers.OfferListActivity"/>
+
         <activity android:name=".LoginActivity"/>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"

@@ -163,7 +163,6 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
             animatorSmoothly.cancel();
         }
 
-
         animatorSmoothly = ValueAnimator.ofInt((int) currentScroll, targetScroll);
         animatorSmoothly .addUpdateListener(listenerAnimSmoothly);
         animatorSmoothly .start();
@@ -280,10 +279,6 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
         indicatorProgressUpdate((float) progress);
     }
 
-    public void setIndicatorListener(PagerIndicator.IndicatorChangeListener pageChangeListener) {
-        pagerIndicator.setIndicatorListener(pageChangeListener);
-    }
-
     float indicatorOrogress;
     private void indicatorProgressUpdate(float progress) {
         indicatorOrogress = progress;
@@ -323,8 +318,7 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
 
     @Override
     public int getCollapsableHeight() {
-        return (int) (imageHeight + indicatorHeight /2f + pagerIndicator.getIndicatorMarkerHeight()/2f - toolbar.getPaddingTop());
-        //return getHeight() - toolbar.getPaddingTop();
+        return (int) (imageHeight + indicatorHeight /2f);
     }
 
     public int getTTT() {

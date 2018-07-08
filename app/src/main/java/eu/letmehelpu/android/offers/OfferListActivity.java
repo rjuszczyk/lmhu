@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class OfferListActivity extends AppCompatActivity implements PagerIndicator.IndicatorChangeListener {
+public class OfferListActivity extends AppCompatActivity {
 
     private View bottomNavIndicator;
     private View bottomNav;
@@ -42,11 +42,6 @@ public class OfferListActivity extends AppCompatActivity implements PagerIndicat
     private CollapsingToolbarWithPagerIndicator collapsingToolbar;
     private int bottomItemSelected = 0;
 
-
-
-
-
-    private int delta = -1;
 
 
     public static Intent getStartIntent(Context context) {
@@ -63,7 +58,7 @@ public class OfferListActivity extends AppCompatActivity implements PagerIndicat
 
 
         if(savedInstanceState != null) {
-            delta = savedInstanceState.getInt("delta");
+            //delta = savedInstanceState.getInt("delta");
            // linearLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable("linearLayoutManager"));
 
         }
@@ -78,7 +73,6 @@ public class OfferListActivity extends AppCompatActivity implements PagerIndicat
         scrollableCollapsingManager = new ScrollableCollapsingManager(collapsingToolbar, offerList);
 
 
-        collapsingToolbar.setIndicatorListener(this);
         initOfferListAdapter();
 
         bottomNavIndicator = findViewById(R.id.bottom_nav_indicator);
@@ -225,24 +219,5 @@ public class OfferListActivity extends AppCompatActivity implements PagerIndicat
 
 
 
-    }
-
-    @Override
-    public void onPageChanged(int page) {
-        if(page == 0) {
-            scrollableCollapsingManager.attachRecycler(offerList);
-            offerList.setVisibility(View.VISIBLE);
-            offerList2.setVisibility(View.VISIBLE);
-            offerList.setTranslationX(offerList.getWidth());
-            offerList.animate().translationX(0).start();
-            offerList2.animate().translationX(-offerList.getWidth()).start();
-        } else {
-            scrollableCollapsingManager.attachRecycler(offerList2);
-            offerList.setVisibility(View.VISIBLE);
-            offerList2.setVisibility(View.VISIBLE);
-            offerList2.setTranslationX(offerList2.getWidth());
-            offerList2.animate().translationX(0).start();
-            offerList.animate().translationX(-offerList2.getWidth()).start();
-        }
     }
 }

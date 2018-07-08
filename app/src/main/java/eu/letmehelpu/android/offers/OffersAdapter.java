@@ -40,7 +40,7 @@ public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof OffersViewHolder) {
             OffersViewHolder offersViewHolder = (OffersViewHolder) holder;
-            offersViewHolder.setItem(offerItems.get(position));
+            offersViewHolder.setItem(offerItems.get(position), position);
         } else {
             holder.itemView.setLayoutParams(new ViewGroup.LayoutParams(10, transparentItem));
         }
@@ -83,11 +83,11 @@ public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             offerItemView = itemView;
         }
 
-        public void setItem(OfferItem offerItem) {
+        public void setItem(OfferItem offerItem, int position) {
 
 
 
-            offerItemView.setOfferTitle(offerItem.getTitle());
+            offerItemView.setOfferTitle(position + " " + offerItem.getTitle());
             offerItemView.setContractor(offerItem.getContractor());
             offerItemView.setOfferStatus(offerItem.getStatus());
             offerItemView.setThumbnail(offerItem.getThumbnail());
