@@ -5,6 +5,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -28,29 +29,20 @@ public class MarginBehaviour extends CoordinatorLayout.Behavior<PagerIndicator>{
         return dependency instanceof ViewPager;
     }
 
+    int start = Integer.MIN_VALUE;
     public boolean onDependentViewChanged(CoordinatorLayout parent, PagerIndicator child, View dependency) {
         if(dependency instanceof  ViewPager) {
+            int y = dependency.getTop() - child.getHeight();
+            if(start == Integer.MIN_VALUE) {
+                start = y;
+            }
+            //float start = parent.getResources().getDimension(R.dimen.offers_top_image_height)-child.getIndicatorHeight();
 
-            int startMargin = (int) (parent.getResources().getDisplayMetrics().density*26);
-            int endMargin = 0;
+            float end = 0;
+            float delta = end - start;
+            float movedBy = y - start;
+            float progress = movedBy/delta;
 
-            View appBar = parent.findViewById(R.id.appBar);
-            View toolbar = parent.findViewById(R.id.toolbar);
-            int toolbarEndY  = toolbar.getTop();
-            int y = dependency.getTop() - parent.findViewById(R.id.tabs).getHeight();
-            int c = (int) (toolbar.getResources().getDimension(R.dimen.offers_top_image_height)-toolbar.getHeight());
-            int dd = (appBar.getHeight()-toolbar.getHeight()) - c;
-            int p = y - dd;
-            int total = (appBar.getHeight()-toolbar.getHeight()-dd);
-
-            float progress = (float) p / (float) total;
-            progress = 1-progress;
-            int currentMargin = (int)(endMargin*progress + (1-progress)*startMargin);
-            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
-
-
-            marginLayoutParams.leftMargin = currentMargin;
-            marginLayoutParams.rightMargin = currentMargin;
 
             child.setTranslationY(y+child.getIndicatorHeight()+child.getIndicatorMarkerHeight()/2);
             child.updateProgress(progress);

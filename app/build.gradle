@@ -109,6 +109,7 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+
     // Dependency for Google Sign-In
     implementation 'com.google.android.gms:play-services-auth:11.8.0'
 
@@ -117,6 +118,9 @@ dependencies {
     implementation 'com.google.api-client:google-api-client-android:1.23.0'
     implementation 'com.google.apis:google-api-services-people:v1-rev237-1.23.0'
 
+    // rx java
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.17'
 
     testImplementation 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.15.0'

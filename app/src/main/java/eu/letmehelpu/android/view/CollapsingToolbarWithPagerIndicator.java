@@ -107,7 +107,7 @@ public class CollapsingToolbarWithPagerIndicator extends FrameLayout implements 
         View toolbarContainer = view.findViewById(R.id.toolbarContainer);
 
         pagerIndicator.setIndicatorHeight(indicatorHeight);
-        pagerIndicator.setInitialHorizontalMargin(initialHorizontalMargin);
+        //pagerIndicator.setInitialHorizontalMargin(initialHorizontalMargin);
         pagerIndicator.setInitialRadius(initialRadius);
 
         float topHeight = imageHeight + indicatorHeight /2f + pagerIndicator.getIndicatorMarkerHeight()/2f;

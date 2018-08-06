@@ -27,6 +27,8 @@ public class PagerIndicator extends FrameLayout {
     private CustomTestView indicator;
     private int selectedPage;
     private ViewPager viewPager;
+    private float elevationFrom;
+    private float elevationTo;
 
     public PagerIndicator(@NonNull Context context) {
         super(context);
@@ -65,6 +67,9 @@ public class PagerIndicator extends FrameLayout {
         } else {
             indicatorHeight = getDefaultIndicatorHeight();
         }
+
+        elevationFrom = getResources().getDisplayMetrics().density*2;
+        elevationTo = getResources().getDisplayMetrics().density*8;
 
         View view = inflate(getContext(), R.layout.pager_indicator, this);
         option0 = view.findViewById(R.id.option1);
@@ -116,6 +121,10 @@ public class PagerIndicator extends FrameLayout {
 
         float value1 = from1*(1-pr) + to1*pr;
         card.setRadius(value1 < 0.5 ? 0 : value1);
+
+
+        float currentElevation = elevationFrom*(1-pr) + pr*elevationTo;
+        card.setElevation(currentElevation);
 
         float from = initialHorizontalMargin;
         float to = 0;
@@ -232,5 +241,9 @@ public class PagerIndicator extends FrameLayout {
         if(viewPager!=null) {
             viewPager.setCurrentItem(selectedPage);
         }
+    }
+
+    public float getInitialHorizontalMargin() {
+        return initialHorizontalMargin;
     }
 }

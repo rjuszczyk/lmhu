@@ -36,4 +36,16 @@ public class OfferItem {
     public int getStatus() {
         return status;
     }
+
+
+    public static OfferItem create(int i) {
+        OfferItem offerItem = new OfferItem();
+        offerItem.title = "Item " + i;
+        offerItem.status = 0;
+        offerItem.thumbnail = "uploads/offer/desk-office-pen-ruler-450x260.jpg";
+        offerItem.contractor = new ContractorItem();
+        offerItem.contractor.first_name = "First";
+        offerItem.contractor.last_name= "Last";
+        return offerItem;
+    }
 }
