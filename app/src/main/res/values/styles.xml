@@ -13,7 +13,7 @@
         <item name="android:textAppearanceMediumInverse">@style/TextAppearanceMyInverse</item>
         <item name="cardViewStyle">@style/RoundedCardView</item>
 
-        <item name="collapsingToolbarStyle">@style/CollapsingToolbarBase</item>
+
         <item name="buttonStyleThinBorder">@style/LetMeHelpUButton.Colored.ThinBorder</item>
 
         <item name="cornerRadius">10dp</item>
@@ -22,7 +22,7 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="AppThemeBase">
-        <item name="collapsingToolbarStyle">@style/CollapsingToolbarBase</item>
+
     </style>
 
     <style name="RoundedCardView" parent="@style/CardView">

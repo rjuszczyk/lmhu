@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".offers.OfferListActivity"/>
+        <activity android:name=".chat.ChatConversationActivity"/>
 
         <activity android:name=".LoginActivity"/>
         <activity android:name=".MainActivity"/>

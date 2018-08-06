@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.offers;
+package eu.letmehelpu.android.chat;
 
 
 import android.content.Context;
@@ -6,15 +6,12 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,14 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import eu.letmehelpu.android.EntryActivity;
-import eu.letmehelpu.android.MainActivity;
 import eu.letmehelpu.android.R;
-import eu.letmehelpu.android.chat.ChatConversationActivity;
+import eu.letmehelpu.android.offers.OfferListFragment;
 import eu.letmehelpu.android.view.PagerIndicator;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class OfferListActivity extends AppCompatActivity {
+public class ChatConversationActivity extends AppCompatActivity {
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, ChatConversationActivity.class);
@@ -38,18 +33,10 @@ public class OfferListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_offers2);
+        setContentView(R.layout.activity_chat_conversation);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        ViewPager mViewPager = findViewById(R.id.viewpager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        final PagerIndicator pagerIndicator = findViewById(R.id.tabs);
-        pagerIndicator.setupWithViewPager(mViewPager);
     }
 
     @Override

@@ -148,7 +148,7 @@
             />
     </LinearLayout>
 
-    <eu.letmehelpu.android.view.CustomTestView
+    <eu.letmehelpu.android.view.PagerIndicatorMarkerView
         android:id="@+id/test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:background="@drawable/red_underline" />
-    </eu.letmehelpu.android.view.CustomTestView>
+    </eu.letmehelpu.android.view.PagerIndicatorMarkerView>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,8 +1,8 @@
 <resources>
     <style name="AppTheme" parent="AppThemeBase">
-        <item name="collapsingToolbarStyle">@style/CollapsingToolbar.Long</item>
+        <!--<item name="collapsingToolbarStyle">@style/CollapsingToolbar.Long</item>-->
     </style>
-    <style name="CollapsingToolbar.Long" parent="CollapsingToolbarBase">
-        <item name="ctimageHeight">220dp</item>
-    </style>
+    <!--<style name="CollapsingToolbar.Long" parent="CollapsingToolbarBase">-->
+        <!--<item name="ctimageHeight">220dp</item>-->
+    <!--</style>-->
 </resources>

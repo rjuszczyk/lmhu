@@ -24,7 +24,7 @@ public class PagerIndicator extends FrameLayout {
     private View split;
     private View option0;
     private View option1;
-    private CustomTestView indicator;
+    private PagerIndicatorMarkerView indicator;
     private int selectedPage;
     private ViewPager viewPager;
     private float elevationFrom;

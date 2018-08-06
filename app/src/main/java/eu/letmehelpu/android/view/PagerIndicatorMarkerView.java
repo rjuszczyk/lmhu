@@ -10,23 +10,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-public class CustomTestView extends FrameLayout {
+public class PagerIndicatorMarkerView extends FrameLayout {
     View child;
     int selectedPage = 0;
 
-    public CustomTestView(@NonNull Context context) {
+    public PagerIndicatorMarkerView(@NonNull Context context) {
         super(context);
     }
 
-    public CustomTestView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public PagerIndicatorMarkerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomTestView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public PagerIndicatorMarkerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public CustomTestView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PagerIndicatorMarkerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
