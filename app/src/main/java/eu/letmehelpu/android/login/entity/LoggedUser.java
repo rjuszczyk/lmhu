@@ -1,4 +1,4 @@
-package eu.letmehelpu.android;
+package eu.letmehelpu.android.login;
 
 public class LoggedUser {
     public final static int LOGGED_WITH_APP = 1;
