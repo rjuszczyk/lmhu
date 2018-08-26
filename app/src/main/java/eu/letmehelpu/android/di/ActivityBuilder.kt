@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import eu.letmehelpu.android.EntryActivity
 import eu.letmehelpu.android.LetMeHelpUApplication
+import eu.letmehelpu.android.chat.ChatConversationActivity
 import eu.letmehelpu.android.messaging.MyFirebaseInstanceIdService
 import eu.letmehelpu.android.di.scope.ActivityScope
 import eu.letmehelpu.android.login.LoginActivity
@@ -29,6 +30,10 @@ abstract class ActivityBuilder {
     @ActivityScope
     @ContributesAndroidInjector(modules = [])
     internal abstract fun bindEntryActivity(): EntryActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [])
+    internal abstract fun bindChatConversationActivity(): ChatConversationActivity
 
     @ActivityScope
     @ContributesAndroidInjector(modules = [FragmentBuilder::class])

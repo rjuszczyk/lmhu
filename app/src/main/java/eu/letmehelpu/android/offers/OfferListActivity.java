@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import dagger.android.support.DaggerAppCompatActivity;
 import eu.letmehelpu.android.R;
 import eu.letmehelpu.android.UserFragment;
+import eu.letmehelpu.android.conversations.ConversationsFragment;
 import eu.letmehelpu.android.view.BottomNavigationBar;
 
 public class OfferListActivity extends DaggerAppCompatActivity {
@@ -48,8 +49,8 @@ public class OfferListActivity extends DaggerAppCompatActivity {
                     if(index%2==0) {
                         transaction.replace(R.id.container, new OffersFragment(), "" + index);
                     } else {
-                        transaction.replace(R.id.container, new UserFragment(), "" + index);
-
+                        //transaction.replace(R.id.container, new UserFragment(), "" + index);
+                        transaction.replace(R.id.container, ConversationsFragment.Companion.createFragment(10L), "" + index);
                     }
                     transaction.commit();
                 }
