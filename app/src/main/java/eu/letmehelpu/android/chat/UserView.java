@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.view;
+package eu.letmehelpu.android.chat;
 
 import android.content.Context;
 import android.content.res.TypedArray;

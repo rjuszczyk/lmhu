@@ -1,4 +1,4 @@
-package eu.letmehelpu.android
+package eu.letmehelpu.android.messaging
 
 import android.util.Log
 import com.google.firebase.iid.FirebaseInstanceId

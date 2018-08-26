@@ -1,13 +1,13 @@
 package eu.letmehelpu.android;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
@@ -18,44 +18,41 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 
-public class MainActivity extends AppCompatActivity {
+import javax.inject.Inject;
 
-    UserRepository userRepository;
-    private static final String TAG = MainActivity.class.getSimpleName();
+import dagger.android.support.DaggerFragment;
+import eu.letmehelpu.android.login.LoginActivity;
+import eu.letmehelpu.android.login.domain.LogoutUseCase;
+import eu.letmehelpu.android.login.entity.LoggedUser;
+import eu.letmehelpu.android.login.entity.LoginGateway;
+
+public class UserFragment extends DaggerFragment {
+
+    private static final String TAG = UserFragment.class.getSimpleName();
+    @Inject
+    LogoutUseCase logoutUseCase;
+    @Inject LoginGateway loginGateway;
+
     private GoogleSignInClient googleSignInClient;
 
-    public static Intent getStartIntent(Context context) {
-        return new Intent(context, MainActivity.class);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_main, container, false);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        findViewById(R.id.toolbar).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                ViewCompat.requestApplyInsets(v);
-            }
-        });
-        findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewCompat.requestApplyInsets(v);
-            }
-        });
-
-
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
 
-        googleSignInClient = GoogleSignIn.getClient(this, gso);
-        userRepository = new UserRepository(getSharedPreferences("userRepository", MODE_PRIVATE));
+        googleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
-        TextView textView = findViewById(R.id.main_logged_user);
+        TextView textView = view.findViewById(R.id.main_logged_user);
 
-        LoggedUser loggedUser = userRepository.getLoggedUser();
+        LoggedUser loggedUser = loginGateway.getLoggedUser();
         String loggedWith;
         switch (loggedUser.getLoggedWith()) {
             case LoggedUser.LOGGED_WITH_APP:
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         textView.setText(loggedWith);
 
-        findViewById(R.id.main_logout)
+        view.findViewById(R.id.main_logout)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        if(userRepository.getLoggedUser().getLoggedWith() == LoggedUser.LOGGED_WITH_GOOGLE) {
+        if(loginGateway.getLoggedUser().getLoggedWith() == LoggedUser.LOGGED_WITH_GOOGLE) {
             googleSignInClient.signOut()
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -91,27 +88,25 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "onFailure() called with: e = [" + e + "]");
                         }
                     })
-                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            userRepository.logout();
+                            logoutUseCase.logout();
                             goToLoginActivity();
                         }
                     });
-        }
-        if(userRepository.getLoggedUser().getLoggedWith() == LoggedUser.LOGGED_WITH_FACEBOOK) {
+        } else if(loginGateway.getLoggedUser().getLoggedWith() == LoggedUser.LOGGED_WITH_FACEBOOK) {
             LoginManager.getInstance().logOut();
-            userRepository.logout();
+            logoutUseCase.logout();
             goToLoginActivity();
-        }
-        if(userRepository.getLoggedUser().getLoggedWith() == LoggedUser.LOGGED_WITH_APP) {
-            userRepository.logout();
+        } else if(loginGateway.getLoggedUser().getLoggedWith() == LoggedUser.LOGGED_WITH_APP) {
+            logoutUseCase.logout();
             goToLoginActivity();
         }
     }
 
     private void goToLoginActivity() {
-        Intent intent = LoginActivity.getStartIntent(MainActivity.this);
+        Intent intent = LoginActivity.getStartIntent(getActivity());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

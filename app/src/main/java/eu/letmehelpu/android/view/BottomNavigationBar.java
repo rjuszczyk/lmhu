@@ -20,6 +20,7 @@ public class BottomNavigationBar extends FrameLayout {
     private int barHeight;
     private View bottomNavIndicator;
     private int bottomItemSelected = 0;
+    private OnBottomItemSelected onBottomItemSelected;
 
     public BottomNavigationBar(@NonNull Context context) {
         super(context);
@@ -117,6 +118,9 @@ public class BottomNavigationBar extends FrameLayout {
         bottomNavIndicator.animate().translationX(tX).start();
 
         setBottomItemHighlighted(bottomItemSelected);
+        if(onBottomItemSelected != null) {
+            onBottomItemSelected.onItemSelected(bottomItemSelected);
+        }
     }
 
     private void setBottomItemHighlighted(int bottomItemSelected) {
@@ -130,6 +134,10 @@ public class BottomNavigationBar extends FrameLayout {
         float w = getWidth()/4f;
         float w2 = bottomItemSelected*w+w/2f;
         return w2 - bottomNavIndicator.getWidth()/2;
+    }
+
+    public void setOnBottomItemSelected(OnBottomItemSelected onBottomItemSelected) {
+        this.onBottomItemSelected = onBottomItemSelected;
     }
 
     @Override
@@ -151,5 +159,9 @@ public class BottomNavigationBar extends FrameLayout {
             state = bundle.getParcelable("superState");
         }
         super.onRestoreInstanceState(state);
+    }
+
+    public interface OnBottomItemSelected {
+        void onItemSelected(int index);
     }
 }

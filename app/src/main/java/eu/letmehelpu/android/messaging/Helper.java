@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.network;
+package eu.letmehelpu.android.messaging;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

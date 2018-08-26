@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.notification
+package eu.letmehelpu.android.messaging
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -10,19 +10,16 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.util.Log
-import eu.letmehelpu.android.MainActivity
 import eu.letmehelpu.android.R
-import eu.letmehelpu.android.conversation.ConversationActivity
-import eu.letmehelpu.android.conversationlist.ConversationListActivity
-import eu.letmehelpu.android.messaging.SendMessageService
-import eu.letmehelpu.android.model.Conversation
-import eu.letmehelpu.android.model.Message
+
+import eu.letmehelpu.android.messaging.model.Conversation
+import eu.letmehelpu.android.messaging.model.Message
 
 
 class MessagesNotificationManager(val context: Context) {
     private val notificationManager: NotificationManagerCompat =  NotificationManagerCompat.from(context)
 
-    fun displayConversationNotification(conversation:Conversation, userId:Long, messages:List<Message>) {
+    fun displayConversationNotification(conversation: Conversation, userId:Long, messages:List<Message>) {
         val notification = createNotifciation(conversation, userId, messages)
         val notificationId = getNotificationIdForConversation(conversation)
         Log.d("RADEK", "displaying ["+conversation.lastMessage+"] to [" + conversation.documentId+"]")
@@ -39,16 +36,17 @@ class MessagesNotificationManager(val context: Context) {
 
 
         // Create an Intent for the activity you want to start
-        val mainActivity = Intent(context, MainActivity::class.java)
-        val conversationList = ConversationListActivity.createIntent(context, userId)
-        val resultIntent = ConversationActivity.createIntent(context, userId, conversation)
+//        val mainActivity = Intent(context, MainActivity::class.java)
+//        val conversationList = ConversationListActivity.createIntent(context, userId)
+//        val resultIntent = ConversationActivity.createIntent(context, userId, conversation)
         // Create the TaskStackBuilder and add the intent, which inflates the back stack
-        val stackBuilder = TaskStackBuilder.create(context)
-        stackBuilder.addNextIntentWithParentStack(mainActivity)
-        stackBuilder.addNextIntentWithParentStack(conversationList)
-        stackBuilder.addNextIntentWithParentStack(resultIntent)
-        // Get the PendingIntent containing the entire back stack
-        val resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+
+//        val stackBuilder = TaskStackBuilder.create(context)
+//        stackBuilder.addNextIntentWithParentStack(mainActivity)
+//        stackBuilder.addNextIntentWithParentStack(conversationList)
+//        stackBuilder.addNextIntentWithParentStack(resultIntent)
+//        // Get the PendingIntent containing the entire back stack
+//        val resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val replyAction: NotificationCompat.Action = getReplyAction(context, conversation)
         val dismissAction: NotificationCompat.Action = getDismissAction(context, conversation)
@@ -63,7 +61,7 @@ class MessagesNotificationManager(val context: Context) {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(replyAction)
                 .addAction(dismissAction)
-                .setContentIntent(resultPendingIntent)
+//                .setContentIntent(resultPendingIntent)
 
         // notificationId is a unique int for each notification that you must define
         return mBuilder.build()
@@ -97,7 +95,7 @@ class MessagesNotificationManager(val context: Context) {
 
 
 
-        val user = Person.Builder().setIcon(IconCompat.createWithResource(context, R.drawable.icon_test)).setName("user name").build()
+        val user = Person.Builder().setIcon(IconCompat.createWithResource(context, R.drawable.sample_user_image)).setName("user name").build()
         val style = NotificationCompat.MessagingStyle(user)
         style.setConversationTitle("conversation title")
 

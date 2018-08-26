@@ -3,7 +3,7 @@ package eu.letmehelpu.android.messaging
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import eu.letmehelpu.android.AppConstant
-import eu.letmehelpu.android.model.Message
+import eu.letmehelpu.android.messaging.model.Message
 
 class SendMessage {
     public fun sendMessage(conversationId:String , userId:Long, messageText: String) : Timestamp {

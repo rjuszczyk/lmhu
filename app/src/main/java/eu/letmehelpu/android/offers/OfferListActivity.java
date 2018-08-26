@@ -3,36 +3,21 @@ package eu.letmehelpu.android.offers;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import eu.letmehelpu.android.EntryActivity;
-import eu.letmehelpu.android.MainActivity;
+import dagger.android.support.DaggerAppCompatActivity;
 import eu.letmehelpu.android.R;
-import eu.letmehelpu.android.chat.ChatConversationActivity;
-import eu.letmehelpu.android.view.PagerIndicator;
+import eu.letmehelpu.android.UserFragment;
+import eu.letmehelpu.android.view.BottomNavigationBar;
 
-@RequiresApi(api = Build.VERSION_CODES.M)
-public class OfferListActivity extends AppCompatActivity {
+public class OfferListActivity extends DaggerAppCompatActivity {
 
     public static Intent getStartIntent(Context context) {
-        return new Intent(context, ChatConversationActivity.class);
+        return new Intent(context, OfferListActivity.class);
     }
 
     @Override
@@ -40,17 +25,43 @@ public class OfferListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offers2);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        BottomNavigationBar bottomNav = findViewById(R.id.bottom_nav);
+        bottomNav.setOnBottomItemSelected(new BottomNavigationBar.OnBottomItemSelected() {
+            @Override
+            public void onItemSelected(int index) {
+                int currentIndex = -1;
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
+                if(currentFragment != null) {
+                    currentIndex = Integer.parseInt(currentFragment.getTag());
+                }
+                if(currentIndex != index) {
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    if(currentIndex != -1) {
+                        if(currentIndex<index) {
+                            transaction.setCustomAnimations(R.anim.right_in, R.anim.right_out);
+                        } else {
+                            transaction.setCustomAnimations(R.anim.left_in, R.anim.left_out);
+                        }
+                    }
+//                    transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+                    if(index%2==0) {
+                        transaction.replace(R.id.container, new OffersFragment(), "" + index);
+                    } else {
+                        transaction.replace(R.id.container, new UserFragment(), "" + index);
 
-        ViewPager mViewPager = findViewById(R.id.viewpager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        final PagerIndicator pagerIndicator = findViewById(R.id.tabs);
-        pagerIndicator.setupWithViewPager(mViewPager);
+                    }
+                    transaction.commit();
+                }
+//                if(index==1)
+//                    startActivity(ChatConversationActivity.getStartIntent(OfferListActivity.this));
+//                if(index==2) {
+//                    startActivity(MainActivity.getStartIntent(OfferListActivity.this));
+//                }
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,59 +79,5 @@ public class OfferListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class PlaceholderFragment extends Fragment {
 
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText("Section " + getArguments().getInt(ARG_SECTION_NUMBER));
-            return rootView;
-        }
-    }
-
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return new OfferListFragment();
-            //return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
-            }
-            return null;
-        }
-    }
 }

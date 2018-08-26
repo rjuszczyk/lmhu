@@ -1,4 +1,4 @@
 package eu.letmehelpu.android.messaging;
 
-public class TokenState {
+public class MessagingTokenState {
 }

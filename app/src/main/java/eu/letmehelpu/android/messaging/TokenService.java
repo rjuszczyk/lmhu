@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.network;
+package eu.letmehelpu.android.messaging;
 
 import android.support.annotation.Nullable;
 

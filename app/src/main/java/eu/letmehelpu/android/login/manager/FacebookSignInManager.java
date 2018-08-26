@@ -1,71 +1,89 @@
 package eu.letmehelpu.android.login.manager;
 
-import android.app.Activity;
 import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.facebook.AccessToken;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 
-import eu.letmehelpu.android.login.domain.LoginWithGoogleLoginUseCase;
+import java.util.Collections;
+
+import eu.letmehelpu.android.login.domain.LoginWithFacebookLoginUseCase;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 
-public class GoogleSignInManager {
-    private static final String TAG = GoogleSignInManager.class.getSimpleName();
+public class FacebookSignInManager  extends AbsLoginManager {
+    private static final String TAG = FacebookSignInManager.class.getSimpleName();
+    private final AppCompatActivity activity;
 
-    private static final int RC_SIGN_IN = 9001;
-    private GoogleSignInClient mGoogleSignInClient;
-    private Callback callback;
-    private LoginWithGoogleLoginUseCase loginWithGoogleLoginUseCase;
     private Disposable disposable;
+    private LoginWithFacebookLoginUseCase loginWithFacebookLoginUseCase;
+    private CallbackManager callbackManager;
+    private static String attemptingFbToken;
 
-    public void onCreate(Activity activity, LoginWithGoogleLoginUseCase loginWithGoogleLoginUseCase, Callback callback) {
-        this.callback = callback;
-        this.loginWithGoogleLoginUseCase = loginWithGoogleLoginUseCase;
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
+    public FacebookSignInManager(AppCompatActivity activity, LoginWithFacebookLoginUseCase loginWithFacebookLoginUseCase, LoginCallback callback) {
+        super(activity, callback);
+        this.activity = activity;
+        activity.getLifecycle().addObserver(this);
+        this.loginWithFacebookLoginUseCase = loginWithFacebookLoginUseCase;
     }
 
-    public void signIn(Activity activity) {
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    public void onCreate() {
+        Log.d(TAG, "onCreate() called");
+        callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(final LoginResult loginResult) {
+                        String fbToken = loginResult.getAccessToken().getToken();
+                        handleFacebookSignInResult(fbToken);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        callback.onCancel();
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        callback.onFailed(exception.getMessage());
+                    }
+                });
+
+        if(attemptingFbToken != null) {
+            handleFacebookSignInResult(attemptingFbToken);
+        }
+    }
+
+    @Override
+    public void signIn() {
         callback.showProgress();
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        activity.startActivityForResult(signInIntent, RC_SIGN_IN);
+        LoginManager.getInstance().logInWithReadPermissions(activity, Collections.singletonList("public_profile"));
     }
 
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                final GoogleSignInAccount account = task.getResult(ApiException.class);
-                handleGoogleSignInResult(account.getId());
-            } catch (ApiException e) {
-                callback.onFailed("signInResult:failed code = " + e.getStatusCode());
-            }
-        }
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void onStart(Activity activity) {
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(activity);
-        if(account != null) {
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    public void onStart() {
+        if(AccessToken.getCurrentAccessToken() != null) {
             callback.showProgress();
-            handleGoogleSignInResult(account.getId());
+            handleFacebookSignInResult(AccessToken.getCurrentAccessToken().getToken());
         }
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onStop() {
         if(disposable != null) {
             disposable.dispose();
@@ -73,28 +91,31 @@ public class GoogleSignInManager {
         }
     }
 
-    private void handleGoogleSignInResult(final String accountId) {
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    public void onDestroy() {
+        LoginManager.getInstance().unregisterCallback(callbackManager);
+    }
+
+    private void handleFacebookSignInResult(final String fbToken) {
         if(disposable != null) {
             disposable.dispose();
             disposable = null;
         }
-        disposable = loginWithGoogleLoginUseCase.login(accountId).subscribe(new Action() {
+
+        attemptingFbToken = fbToken;
+        disposable = loginWithFacebookLoginUseCase.login(fbToken).subscribe(new Action() {
             @Override
             public void run() {
+                attemptingFbToken = null;
                 callback.onLoggedIn();
             }
         }, new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) {
+                attemptingFbToken = null;
+                LoginManager.getInstance().logOut();
                 callback.onFailed(throwable.getMessage());
-                mGoogleSignInClient.signOut();
             }
         });
-    }
-
-    public interface Callback {
-        void showProgress();
-        void onLoggedIn();
-        void onFailed(String message);
     }
 }

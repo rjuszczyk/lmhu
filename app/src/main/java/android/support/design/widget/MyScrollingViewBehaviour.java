@@ -45,7 +45,7 @@ public class MyScrollingViewBehaviour  extends HeaderScrollingViewBehavior {
             // Offset the rect by the child's left/top
             rectangle.offset(child.getLeft(), child.getTop());
 
-            final Rect parentRect = mTempRect1;
+            final Rect parentRect = tempRect1;
             parentRect.set(0, 0, parent.getWidth(), parent.getHeight());
 
             if (!parentRect.contains(rectangle)) {

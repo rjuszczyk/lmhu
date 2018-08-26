@@ -5,4 +5,5 @@
     <dimen name="small_items_maring_vertical">4dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="offers_top_image_height">200dp</dimen>
+    <dimen name="dialog_margin">16dp</dimen>
 </resources>

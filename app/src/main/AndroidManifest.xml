@@ -21,8 +21,7 @@
         <activity android:name=".offers.OfferListActivity"/>
         <activity android:name=".chat.ChatConversationActivity"/>
 
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".login.LoginActivity"/>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
@@ -33,6 +32,20 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="690818e59b461d50f49083c11f82c0ee11ff80b9" />
+
+        <service
+            android:name=".messaging.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name=".messaging.MyFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <service android:name=".messaging.SendMessageService" />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

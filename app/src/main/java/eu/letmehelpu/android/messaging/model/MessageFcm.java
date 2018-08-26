@@ -1,4 +1,4 @@
-package eu.letmehelpu.android;
+package eu.letmehelpu.android.messaging.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,11 +15,11 @@ public class MessageFcm {
         timestampFormat.setCalendar(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
     }
 
-    long by;
-    String sendTimestamp;
-    String text;
+    public long by;
+    public String sendTimestamp;
+    public String text;
 
-    Date getSendTimestamp() {
+    public Date getSendTimestamp() {
         try {
             return timestampFormat.parse(sendTimestamp);
         } catch (ParseException e) {

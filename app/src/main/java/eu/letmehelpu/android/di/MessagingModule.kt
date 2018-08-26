@@ -5,9 +5,9 @@ import dagger.Module
 import dagger.Provides
 import eu.letmehelpu.android.di.scope.AppScope
 import eu.letmehelpu.android.messaging.LoadMessages
+import eu.letmehelpu.android.messaging.MessagesNotificationManager
 import eu.letmehelpu.android.messaging.SendMessage
 import eu.letmehelpu.android.messaging.SendMessageAndLoadConversation
-import eu.letmehelpu.android.notification.MessagesNotificationManager
 import javax.inject.Named
 
 @Module

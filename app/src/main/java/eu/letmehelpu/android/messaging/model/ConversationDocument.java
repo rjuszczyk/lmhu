@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.model;
+package eu.letmehelpu.android.messaging.model;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.ServerTimestamp;

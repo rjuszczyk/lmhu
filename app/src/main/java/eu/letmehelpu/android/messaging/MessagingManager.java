@@ -1,39 +1,43 @@
 package eu.letmehelpu.android.messaging;
 
-import android.content.SharedPreferences;
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.util.List;
-
-import eu.letmehelpu.android.model.Message;
-import eu.letmehelpu.android.network.Helper;
+import eu.letmehelpu.android.login.UserState;
+import eu.letmehelpu.android.login.entity.LoginGateway;
 import io.reactivex.functions.Consumer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MessagingManager implements UserIdStoreage.UserIdChanged, MessagingTokenStoreage.MessagingTokenChanged {
+public class MessagingManager implements MessagingTokenStoreage.MessagingTokenChanged {
 
-    private final UserIdStoreage userIdStoreage;
     private final MessagingTokenStoreage messagingTokenStoreage;
+    private Long userId;
 
-    public MessagingManager(UserIdStoreage userIdStoreage, MessagingTokenStoreage messagingTokenStoreage) {
-        this.userIdStoreage = userIdStoreage;
+    @SuppressLint("CheckResult")
+    public MessagingManager(LoginGateway loginGateway, MessagingTokenStoreage messagingTokenStoreage) {
+        loginGateway.loggedUser().subscribe(new Consumer<UserState>() {
+            @Override
+            public void accept(UserState userState) {
+                if(userState.loggedIn) {
+                    userId = userState.loggedUser.getUserDetails().getId();
+                } else {
+                    userId = null;
+                }
+                onUserIdChanged(userId);
+            }
+        });
         this.messagingTokenStoreage = messagingTokenStoreage;
-    }
-
-    public void putUserId(@Nullable Long userId) {
-        userIdStoreage.updateUserId(userId, this);
     }
 
     public void putMessagingToken(@Nullable String token) {
         messagingTokenStoreage.updateMessagingToken(token, this);
     }
 
-    @Override
-    public void onUserIdChanged(Long newUserId) {
+    private void onUserIdChanged(Long newUserId) {
         if(newUserId != null) {
             String token = messagingTokenStoreage.getMessagingToken();
             if(token != null) {
@@ -45,7 +49,6 @@ public class MessagingManager implements UserIdStoreage.UserIdChanged, Messaging
     @Override
     public void messagingTokenChanged(@Nullable String oldMessagingToken, String newMessagingToken) {
         if(newMessagingToken != null) {
-            Long userId = userIdStoreage.getUserId();
             if(userId != null) {
                 sendUpdateToServer(userId, oldMessagingToken, newMessagingToken);
             }

@@ -4,8 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
 import eu.letmehelpu.android.AppConstant
-import eu.letmehelpu.android.model.Conversation
-import eu.letmehelpu.android.model.Message
+import eu.letmehelpu.android.messaging.model.Message
 import io.reactivex.*
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable

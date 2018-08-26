@@ -6,15 +6,15 @@ import android.content.Intent
 import android.support.v4.app.RemoteInput
 import android.util.Log
 import dagger.android.AndroidInjection
-import eu.letmehelpu.android.model.Conversation
-import eu.letmehelpu.android.notification.MessagesNotificationManager
+import eu.letmehelpu.android.login.entity.LoginGateway
+import eu.letmehelpu.android.messaging.model.Conversation
 import javax.inject.Inject
 
 class SendMessageService : IntentService("SendMessageService") {
 
     @Inject lateinit var messagesNotificationManager: MessagesNotificationManager
     @Inject lateinit var sendMessageAndLoadConversation : SendMessageAndLoadConversation
-    lateinit var userIdStoreage : UserIdStoreage
+    @Inject lateinit var loginGateway: LoginGateway
 
     companion object {
         val SEND_MESSAGE_TO_CONVERSATION_ACTION = "SEND_MESSAGE_TO_CONVERSATION_ACTION"
@@ -38,7 +38,6 @@ class SendMessageService : IntentService("SendMessageService") {
     }
     override fun onCreate() {
         AndroidInjection.inject(this)
-        userIdStoreage = UserIdStoreage(getSharedPreferences("messaging", Context.MODE_PRIVATE))
         super.onCreate()
     }
 
@@ -70,7 +69,7 @@ class SendMessageService : IntentService("SendMessageService") {
     }
 
     fun sendMessage(conversation:Conversation, message: String) {
-        val userId = userIdStoreage.userId
+        val userId = loginGateway.loggedUser.userDetails.id
         val messages = sendMessageAndLoadConversation.sendAndLoad(conversation, userId, message).blockingGet()
 
         messagesNotificationManager.displayConversationNotification(conversation, userId, messages)

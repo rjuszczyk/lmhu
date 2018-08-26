@@ -39,8 +39,7 @@ public class MaskedViewPager extends ViewPager {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         path.reset();
-        path.addRect(new RectF(0,maskedTop/2,Integer.MAX_VALUE,getHeight()), Path.Direction.CW);
-        //path.addRoundRect(new RectF(0,maskedTop/2,getWidth(),getHeight()),0,0,Path.Direction.CW);
+        path.addRect(new RectF(Integer.MIN_VALUE,maskedTop/2,Integer.MAX_VALUE,getHeight()), Path.Direction.CW);
     }
 
     @Override

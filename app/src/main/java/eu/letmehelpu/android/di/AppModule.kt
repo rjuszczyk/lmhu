@@ -1,17 +1,35 @@
 package eu.letmehelpu.android.di
 
-import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import dagger.Module
+import dagger.Provides
+import eu.letmehelpu.android.di.scope.AppScope
+import eu.letmehelpu.android.login.entity.LoginGateway
+import eu.letmehelpu.android.messaging.MessagingManager
+import eu.letmehelpu.android.messaging.MessagingTokenStoreage
 import javax.inject.Named
-import dagger.Binds
-import eu.letmehelpu.android.LmhuApplication
 
 
 @Module
-abstract class AppModule {
+class AppModule {
 
-    @Binds
-    @Named("AppContext")
-    internal abstract fun provideAppContext(app: LmhuApplication): Context
+    @Provides
+    @AppScope
+    fun provideDefaultSharedPreferences(@Named("AppContext") context: Context): SharedPreferences {
+        return context.getSharedPreferences("default", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @AppScope
+    fun provideMessagingManager(loginGateway: LoginGateway, messagingTokenStoreage: MessagingTokenStoreage): MessagingManager {
+        return MessagingManager(loginGateway, messagingTokenStoreage)
+    }
+
+    @Provides
+    @AppScope
+    fun provideMessagingTokenStoreage(sharedPreferences: SharedPreferences): MessagingTokenStoreage {
+        return MessagingTokenStoreage(sharedPreferences)
+    }
+
 }

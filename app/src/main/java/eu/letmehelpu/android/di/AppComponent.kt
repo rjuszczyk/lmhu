@@ -1,22 +1,24 @@
 package eu.letmehelpu.android.di
 
 
-import eu.letmehelpu.android.di.scope.AppScope
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
-import eu.letmehelpu.android.LmhuApplication
+import eu.letmehelpu.android.LetMeHelpUApplication
+import eu.letmehelpu.android.di.scope.AppScope
 
 @Component(modules = [
     AppModule::class,
-    MessagingModule::class,
+    LoginModule::class,
+    NetworkModule::class,
     ActivityBuilder::class,
+    MessagingModule::class,
     AndroidSupportInjectionModule::class
 ])
 
 @AppScope
-interface AppComponent : AndroidInjector<LmhuApplication> {
+interface AppComponent : AndroidInjector<LetMeHelpUApplication> {
 
     @Component.Builder
-    abstract class Builder : AndroidInjector.Builder<LmhuApplication>()
+    abstract class Builder : AndroidInjector.Builder<LetMeHelpUApplication>()
 }

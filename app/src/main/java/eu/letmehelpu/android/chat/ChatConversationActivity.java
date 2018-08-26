@@ -23,7 +23,6 @@ import eu.letmehelpu.android.R;
 import eu.letmehelpu.android.offers.OfferListFragment;
 import eu.letmehelpu.android.view.PagerIndicator;
 
-@RequiresApi(api = Build.VERSION_CODES.M)
 public class ChatConversationActivity extends AppCompatActivity {
 
     public static Intent getStartIntent(Context context) {
@@ -37,6 +36,7 @@ public class ChatConversationActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

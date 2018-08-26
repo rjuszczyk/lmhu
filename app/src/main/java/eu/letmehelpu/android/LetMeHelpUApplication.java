@@ -1,11 +1,14 @@
 package eu.letmehelpu.android;
 
-import android.app.Application;
+import dagger.android.AndroidInjector;
+import dagger.android.support.DaggerApplication;
+import eu.letmehelpu.android.di.DaggerAppComponent;
 
-public class LetMeHelpUApplication extends Application {
+public class LetMeHelpUApplication extends DaggerApplication {
+
     @Override
-    public void onCreate() {
-        super.onCreate();
-        Network.init(this);
+    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+        return DaggerAppComponent.builder()
+                .create(this);
     }
 }

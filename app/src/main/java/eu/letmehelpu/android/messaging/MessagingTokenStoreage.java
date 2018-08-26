@@ -3,6 +3,8 @@ package eu.letmehelpu.android.messaging;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
+import io.reactivex.subjects.BehaviorSubject;
+
 public class MessagingTokenStoreage {
     private final SharedPreferences sharedPreferences;
 

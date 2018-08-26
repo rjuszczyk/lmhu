@@ -1,54 +1,51 @@
-package eu.letmehelpu.android;
+package eu.letmehelpu.android.login;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import eu.letmehelpu.android.network.InvalidField;
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerAppCompatActivity;
+import eu.letmehelpu.android.R;
+import eu.letmehelpu.android.login.domain.LoginWithFacebookLoginUseCase;
+import eu.letmehelpu.android.login.domain.LoginWithGoogleLoginUseCase;
+import eu.letmehelpu.android.login.domain.LoginWithUsernameAndPasswordUseCase;
+import eu.letmehelpu.android.login.manager.ApplicationLoginManager;
+import eu.letmehelpu.android.login.manager.FacebookSignInManager;
+import eu.letmehelpu.android.login.manager.GoogleSignInManager;
+import eu.letmehelpu.android.login.manager.LoginCallback;
 import eu.letmehelpu.android.offers.OfferListActivity;
 import io.fabric.sdk.android.Fabric;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+public class LoginActivity extends DaggerAppCompatActivity {
 
-public class LoginActivity extends AppCompatActivity {
-
-    private static final int RC_SIGN_IN = 9001;
     private static final String TAG = LoginActivity.class.getSimpleName();
+
+    @Inject
+    LoginWithUsernameAndPasswordUseCase loginWithUsernameAndPasswordUseCase;
+    @Inject
+    LoginWithGoogleLoginUseCase loginWithGoogleLoginUseCase;
+    @Inject
+    LoginWithFacebookLoginUseCase loginWithFacebookLoginUseCase;
+
+    private GoogleSignInManager googleSignInManager;
+    private FacebookSignInManager facebookSignInManager;
+    private ApplicationLoginManager applicationLoginManager;
 
     private View loginWithGoogle;
     private View loginWithFacebook;
-    private GoogleSignInClient mGoogleSignInClient;
-    private UserRepository userRepository;
-    private CallbackManager callbackManager;
     private TextView loginUserName;
     private TextView loginPassword;
+    private View progress;
+    private View loginWithApplication;
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, LoginActivity.class);
@@ -60,108 +57,87 @@ public class LoginActivity extends AppCompatActivity {
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
 
-        userRepository = new UserRepository(getSharedPreferences("userRepository", MODE_PRIVATE));
+        progress = findViewById(R.id.progress);
 
         loginUserName = findViewById(R.id.login_username);
         loginPassword = findViewById(R.id.login_password);
 
         loginWithGoogle = findViewById(R.id.login_login_with_google);
         loginWithFacebook = findViewById(R.id.login_login_with_facebook);
+        loginWithApplication = findViewById(R.id.login_login);
 
-        findViewById(R.id.login_login).setOnClickListener(new View.OnClickListener() {
+        LoginCallback loginCallback = new LoginCallback() {
             @Override
-            public void onClick(final View v) {
-                final String userName = loginUserName.getText().toString();
-                final String password = loginPassword.getText().toString();
-                Network.getInstance().getTestApi().login(
-                        userName,
-                        password
-                ).enqueue(new Callback<Map>() {
-                    @Override
-                    public void onResponse(Call<Map> call, Response<Map> response) {
-                        ResponseBody errorBody = response.errorBody();
-                        if(errorBody != null) {
-                            List<InvalidField> invalidFields = new Gson().fromJson(errorBody.charStream(), TypeToken.getParameterized(List.class, InvalidField.class).getType());
-                            String message = invalidFields.get(0).getMessage();
-                            showAlert(message);
-                            return;
-                        }
-
-                        userRepository.setLogged(new LoggedUser(LoggedUser.LOGGED_WITH_APP, userName, password));
-                        navigateToMainActivity();
-                    }
-
-                    @Override
-                    public void onFailure(Call<Map> call, Throwable t) {
-                        showAlert(t.getLocalizedMessage());
-                    }
-
-                    private void showAlert(String message) {
-                        AlertDialog.Builder builder  = new AlertDialog.Builder(LoginActivity.this);
-                        builder.setMessage(message);
-                        builder.show();
-                    }
-                });
-
+            public void showProgress() {
+                if(getSupportFragmentManager().findFragmentByTag(ProgressDialog.TAG)==null) {
+                    ProgressDialog.newFragment(R.string.loading).show(getSupportFragmentManager(), ProgressDialog.TAG);
+                }
             }
-        });
+
+            private void hideProgress() {
+                DialogFragment dialog = (DialogFragment) getSupportFragmentManager().findFragmentByTag(ProgressDialog.TAG);
+                if(dialog!=null) {
+                    dialog.dismiss();
+                }
+            }
+            
+            @Override
+            public void onLoggedIn() {
+                hideProgress();
+                navigateToMainActivity();
+            }
+
+            @Override
+            public void onFailed(String message) {
+                ProgressDialog dialog = (ProgressDialog) getSupportFragmentManager().findFragmentByTag(ProgressDialog.TAG);
+                dialog.displayError(message);
+            }
+
+            @Override
+            public void onCancel() {
+                hideProgress();
+            }
+        };
+
+        applicationLoginManager = new ApplicationLoginManager(this, loginWithUsernameAndPasswordUseCase, loginCallback);
+        googleSignInManager = new GoogleSignInManager(this, loginWithGoogleLoginUseCase, loginCallback);
+        facebookSignInManager = new FacebookSignInManager(this, loginWithFacebookLoginUseCase, loginCallback);
 
         setupLoginWithFacebook();
         setupLoginWithGoogle();
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        setupLoginWithApplication();
     }
+
 
     private void setupLoginWithGoogle() {
         loginWithGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
+                googleSignInManager.signIn();
             }
         });
     }
 
     private void setupLoginWithFacebook() {
-        callbackManager = CallbackManager.Factory.create();
-
         loginWithFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Collections.singletonList("public_profile"));
+                facebookSignInManager.signIn();
             }
         });
-
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        if(loginResult.getAccessToken() != null) {
-                            userRepository.setLogged(new LoggedUser(LoggedUser.LOGGED_WITH_FACEBOOK, loginResult.getAccessToken().getToken()));
-                            navigateToMainActivity();
-                        }
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        // App code
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        // App code
-                    }
-                });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        LoginManager.getInstance().unregisterCallback(callbackManager);
+    private void setupLoginWithApplication() {
+        loginWithApplication.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(final View v) {
+                final String username = loginUserName.getText().toString();
+                final String password = loginPassword.getText().toString();
+
+                applicationLoginManager.signIn(username, password);
+            }
+        });
     }
 
     private void navigateToMainActivity() {
@@ -170,44 +146,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account != null) {
-            userRepository.setLogged(new LoggedUser(LoggedUser.LOGGED_WITH_GOOGLE, account.getId()));
-            navigateToMainActivity();
-        } else
-        if(AccessToken.getCurrentAccessToken() != null) {
-            userRepository.setLogged(new LoggedUser(LoggedUser.LOGGED_WITH_FACEBOOK, AccessToken.getCurrentAccessToken().getToken()));
-            navigateToMainActivity();
-        }
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-        }
-    }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            userRepository.setLogged(new LoggedUser(LoggedUser.LOGGED_WITH_GOOGLE, account.getId()));
-            Log.d(TAG, "Logged with account name = [" + account.getDisplayName() + "]");
-            navigateToMainActivity();
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-
-            Log.w(TAG, "signInResult:failed code = " + e.getStatusCode());
-        }
+        googleSignInManager.onActivityResult(requestCode, resultCode, data);
+        facebookSignInManager.onActivityResult(requestCode, resultCode, data);
     }
 }

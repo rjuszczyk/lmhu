@@ -1,4 +1,4 @@
-package eu.letmehelpu.android
+package eu.letmehelpu.android.messaging
 
 import android.app.ActivityManager
 import android.app.NotificationChannel
@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,13 +13,15 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import dagger.android.AndroidInjection
-import eu.letmehelpu.android.conversation.ConversationActivity
-import eu.letmehelpu.android.messaging.LoadMessages
-import eu.letmehelpu.android.messaging.UserIdStoreage
-import eu.letmehelpu.android.model.Conversation
-import eu.letmehelpu.android.model.ConversationDocument
-import eu.letmehelpu.android.model.Message
-import eu.letmehelpu.android.notification.MessagesNotificationManager
+import eu.letmehelpu.android.AppConstant
+
+import eu.letmehelpu.android.login.entity.LoginGateway
+import eu.letmehelpu.android.messaging.model.Conversation
+import eu.letmehelpu.android.messaging.model.ConversationDocument
+import eu.letmehelpu.android.messaging.model.Message
+import eu.letmehelpu.android.messaging.model.MessageFcm
+
+
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import java.util.*
@@ -34,13 +35,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     lateinit var loadMessages: LoadMessages
     @Inject
     lateinit var messagesNotificationManager: MessagesNotificationManager
-    lateinit var userIdStoreage: UserIdStoreage
+    @Inject
+    lateinit var loginGateway: LoginGateway
     override fun onCreate() {
         super.onCreate()
         AndroidInjection.inject(this)
-        userIdStoreage = UserIdStoreage(getSharedPreferences("messaging", Context.MODE_PRIVATE))
         createNotificationChannel()
-
     }
 
     private fun createNotificationChannel() {
@@ -70,9 +70,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             Log.d(TAG, "Message Notification Body: " + messageFcm.text)
 
-            if(conversationId != ConversationActivity.startedConversation) {
+//            if(conversationId != ConversationActivity.startedConversation) {
                 loadConversation(conversationId, messageFcm.getSendTimestamp().time)
-            }
+//            }
         }
 
         // Check if message contains a notification payload.
@@ -93,7 +93,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 val documentId = it.id
                 if (conversationDocument.timestamp.toDate().time >= noOlderThan) {
                     val conversation = Conversation(conversationDocument, documentId)
-                    val userId = userIdStoreage.userId
+
+                    val userId = loginGateway.loggedUser.userDetails.id
 
                     val lastRead = conversation.lastRead[userId.toString()]?: 0
                     Log.d("RADEK_LAST_READ", "" + lastRead)

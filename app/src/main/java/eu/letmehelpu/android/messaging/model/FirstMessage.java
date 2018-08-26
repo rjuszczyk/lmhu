@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.model;
+package eu.letmehelpu.android.messaging.model;
 
 public class FirstMessage extends Message {
 }

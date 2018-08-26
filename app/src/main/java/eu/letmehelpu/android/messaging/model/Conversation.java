@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.model;
+package eu.letmehelpu.android.messaging.model;
 
 import com.google.firebase.Timestamp;
 
@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Conversation implements Serializable {
 

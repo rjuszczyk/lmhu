@@ -1,4 +1,4 @@
-package eu.letmehelpu.android.model;
+package eu.letmehelpu.android.messaging.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
