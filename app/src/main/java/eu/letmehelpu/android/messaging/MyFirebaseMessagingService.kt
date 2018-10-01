@@ -14,6 +14,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import dagger.android.AndroidInjection
 import eu.letmehelpu.android.AppConstant
+import eu.letmehelpu.android.chat.ChatConversationActivity
 
 import eu.letmehelpu.android.login.entity.LoginGateway
 import eu.letmehelpu.android.messaging.model.Conversation
@@ -70,9 +71,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             Log.d(TAG, "Message Notification Body: " + messageFcm.text)
 
-//            if(conversationId != ConversationActivity.startedConversation) {
+            if(conversationId != ChatConversationActivity.startedConversation) {
                 loadConversation(conversationId, messageFcm.getSendTimestamp().time)
-//            }
+            }
         }
 
         // Check if message contains a notification payload.

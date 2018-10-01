@@ -19,6 +19,7 @@ public class MessagingManager implements MessagingTokenStoreage.MessagingTokenCh
 
     @SuppressLint("CheckResult")
     public MessagingManager(LoginGateway loginGateway, MessagingTokenStoreage messagingTokenStoreage) {
+        this.messagingTokenStoreage = messagingTokenStoreage;
         loginGateway.loggedUser().subscribe(new Consumer<UserState>() {
             @Override
             public void accept(UserState userState) {
@@ -30,7 +31,6 @@ public class MessagingManager implements MessagingTokenStoreage.MessagingTokenCh
                 onUserIdChanged(userId);
             }
         });
-        this.messagingTokenStoreage = messagingTokenStoreage;
     }
 
     public void putMessagingToken(@Nullable String token) {
